@@ -1,0 +1,10 @@
+dynamodb:
+  tables-name:
+    - 'book'
+    - 'user'
+    - 'employee'
+  host: localhost
+  port: 8000
+
+aws:
+  region: 'local'
