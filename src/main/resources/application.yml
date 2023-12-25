@@ -8,3 +8,8 @@ dynamodb:
 
 aws:
   region: 'local'
+
+
+logging:
+  level:
+    'io.micronaut.context.condition': TRACE

@@ -3,47 +3,26 @@ package micronaut.java.dynamodb.gradle.repo;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.annotation.Primary;
+import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.util.CollectionUtils;
 import jakarta.inject.Singleton;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import micronaut.java.dynamodb.gradle.config.DynamoConfiguration;
 import micronaut.java.dynamodb.gradle.model.Identified;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.BillingMode;
-import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
-import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.DeleteItemResponse;
-import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
-import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
-import software.amazon.awssdk.services.dynamodb.model.GlobalSecondaryIndex;
-import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
-import software.amazon.awssdk.services.dynamodb.model.KeyType;
-import software.amazon.awssdk.services.dynamodb.model.Projection;
-import software.amazon.awssdk.services.dynamodb.model.ProjectionType;
-import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
-import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
-import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
-import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
+import software.amazon.awssdk.services.dynamodb.model.*;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 //@Requires(condition = CIAwsRegionProviderChainCondition.class)
 //@Requires(condition = CIAwsCredentialsProviderChainCondition.class)
-@Requires(beans = { DynamoConfiguration.class, DynamoDbClient.class })
+@Requires(beans = {DynamoConfiguration.class, DynamoDbClient.class})
 @Singleton
 @Primary
 public class DynamoRepository<T extends Identified> {
@@ -106,6 +85,10 @@ public class DynamoRepository<T extends Identified> {
                 .build());
     }
 
+    public void createTableV2(CreateTableRequest cliCreateTableRequest) {
+            dynamoDbClient.createTable(cliCreateTableRequest);
+    }
+
     @NonNull
     public QueryRequest findAllQueryRequest(@NonNull Class<?> cls,
                                             @Nullable String beforeId,
@@ -118,7 +101,7 @@ public class DynamoRepository<T extends Identified> {
             builder.limit(limit);
         }
         if (beforeId == null) {
-            return  builder.keyConditionExpression("#pk = :pk")
+            return builder.keyConditionExpression("#pk = :pk")
                     .expressionAttributeNames(Collections.singletonMap("#pk", ATTRIBUTE_GSI_1_PK))
                     .expressionAttributeValues(Collections.singletonMap(":pk",
                             classAttributeValue(cls)))

@@ -6,8 +6,10 @@ import io.micronaut.context.annotation.ContextConfigurer;
 import io.micronaut.context.env.Environment;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.runtime.Micronaut;
+import jakarta.inject.Singleton;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
-public class Application {
+   public class Application {
 
     @ContextConfigurer
     public static class DefaultEnvironmentConfigurer implements ApplicationContextConfigurer {

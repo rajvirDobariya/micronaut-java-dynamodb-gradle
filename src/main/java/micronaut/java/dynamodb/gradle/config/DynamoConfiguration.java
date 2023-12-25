@@ -1,7 +1,7 @@
 package micronaut.java.dynamodb.gradle.config;
 
-import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.annotation.ConfigurationProperties;
+import io.micronaut.context.annotation.Requires;
 import jakarta.validation.constraints.NotBlank;
 
 import java.util.List;
